@@ -9,8 +9,13 @@
 		<script src="linode-javascript/linode.api.js"></script>
 		<script src="linode-javascript/linode.cache.js"></script>
 		<script src="linode-javascript/linode.datalink.js"></script>
+		<script src="jquery-ui/ui/jquery.ui.core.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.widget.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.mouse.js"></script>
+		<script src="jquery-ui/ui/jquery.ui.tabs.js"></script>
+		<link rel="stylesheet" href="jquery-ui/themes/base/jquery.ui.all.css">
 		<style>
-		#results li {
+		.horizontal_lists li {
 			display: inline;
 			list-style-type: none;
 			padding-right: 20px;
@@ -31,6 +36,12 @@
 		</form>
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_domain_list">
+		<form id="linode-${DOMAINID}">
+		  <ul>
+		    <li>Domain <input type="text" name="DOMAIN" value="${DOMAIN}" size=30 disabled="disabled" /></li>
+		    <li>SOA Email <input type="text" name="SOA_EMAIL" size=30 value="${SOA_EMAIL}" /></li>
+		  </ul>
+		</form>
 		</script>
 		<script type="text/javascript">
     $(function()
@@ -38,7 +49,18 @@
       var cache = null;
       var keys = localStorage["api_keys"].split(',')
       var apis = []
-      function trigger_update(l) { for(k in l) { $(l).data(k, l[k]) } }
+      function link_item(elm, item) {
+        $(elm).link(item, LINODE_OBJ_CONVERSION[item.key])
+        for(k in item) {
+          $(item).data(k, item[k])
+        }
+      }
+      function iter_objs(shortname, objs) {
+        $.each(objs, function(i, obj) {
+          var elm = $('#'+shortname+'-'+obj[obj.key])
+          link_item(elm, obj)
+        })
+      }
       $.each(keys, function(i, key)
       {
         if(key && key.length > 1)
@@ -50,14 +72,12 @@
       function start()
       {
         var linodes = cache.getAll('LINODEID');
-        $('#tmpl_linode_list').tmpl(linodes).appendTo('#results')
-        $.each(linodes, function(i, l)
-        {
-          var elm = $('#linode-'+l.LINODEID)
-          elm.link(l, LINODE_OBJ_CONVERSION[l.key])
-          /* this shouldn't be necessary */
-          trigger_update(l)
-        })
+        var domains = cache.getAll('DOMAINID')
+        $('#tmpl_linode_list').tmpl(linodes).appendTo('#linodes')
+        $('#tmpl_domain_list').tmpl(domains).appendTo('#domains')
+        iter_objs('linode', linodes)
+        iter_objs('domain', domains)
+        $('#outer_tabs').tabs()
       }
       cache.fill(start)
     });
@@ -65,7 +85,15 @@
 		</script>
   </head>
   <body>
-		<div id="results">
-		</div>
+    <div id="outer_tabs">
+      <ul>
+        <li><a href="#linodes">Linodes</a></li>
+        <li><a href="#domains">Domains</a></li>
+      </ul>
+  		<div id="linodes" class="horizontal_lists">
+  		</div>
+  		<div id="domains" class="horizontal_lists">
+  		</div>
+	  </div>
   </body>
 </html>

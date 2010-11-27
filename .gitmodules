@@ -7,3 +7,6 @@
 [submodule "linode-javascript"]
 	path = linode-javascript
 	url = git://github.com/tjfontaine/linode-javascript.git
+[submodule "jquery-ui"]
+	path = jquery-ui
+	url = git://github.com/jquery/jquery-ui.git
