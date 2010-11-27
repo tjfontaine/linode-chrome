@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<script src="jquery-datalink/jquery.js"></script>
+		<script src="jquery-datalink/jquery.datalink.js"></script>
+		<script src="jquery-tmpl/jquery.tmpl.js"></script>
+		<script src="jquery-tmpl/jquery.tmplPlus.js"></script>
+		<script src="jquery.json.js"></script>
+		<script src="linode-javascript/linode.api.js"></script>
+		<script src="linode-javascript/linode.cache.js"></script>
+		<script src="linode-javascript/linode.datalink.js"></script>
+		<style>
+		#results li {
+			display: inline;
+			list-style-type: none;
+			padding-right: 20px;
+		}
+		</style>
+		<script type="text/x-jquery-tmpl" id="tmpl_linode_list">
+		<form id="linode-${LINODEID}">
+			<ul style=>
+				<li>Label <input type="text" name="LABEL" value="${LABEL}" size=25 /></li>
+				<li>Status <input type="text" name="STATUS" value="${STATUS}" disabled="disabled" size=10 /></li>
+				<li>Ram <input type="text" name="TOTALRAM" value="${TOTALRAM}" disabled="disabled" size=5 /></li>
+				<li>HD <input type="text" name="TOTALHD" value="${TOTALHD}" disabled="disabled" size=5 /></li>
+				<li>BW <input type="text" name="TOTALXFER" value="${TOTALXFER}" disabled="disabled" size=5 /></li>
+				<li>Datacenter <input type="text" name="DATACENTERID" value="${DATACENTERID.LOCATION}" disabled="disabled" /></li>
+				<li>Backups <input type="checkbox" name="BACKUPSENABLED" {{if BACKUPSENABLED}}checked="true"{{/if}} disabled="disabled" /></li>
+				<li>Lassie <input type="checkbox" name="WATCHDOG" {{if WATCHDOG}}checked="true"{{/if}} disabled="disabled" /></li>
+			</ul>
+		</form>
+		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_domain_list">
+		</script>
+		<script type="text/javascript">
+    $(function()
+    {
+      var cache = null;
+      var keys = localStorage["api_keys"].split(',')
+      var apis = []
+      $.each(keys, function(i, key)
+      {
+        if(key && key.length > 1)
+        {
+          apis.push(new LinodeApi(key))
+        }
+      })
+      cache = new Cache(apis);
+      function start()
+      {
+        var linodes = cache.getAll('LINODEID');
+        $('#tmpl_linode_list').tmpl(linodes).appendTo('#results')
+        $.each(linodes, function(i, l)
+        {
+          var elm = $('#linode-'+l.LINODEID)
+          elm.link(l, LINODE_OBJ_CONVERSION[l.key])
+        })
+      }
+      cache.fill(start)
+    });
+
+		</script>
+  </head>
+  <body>
+		<div id="results">
+		</div>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "Linode Multiple Accounts",
+  "version": "0.0.1",
+  "description": "Manage Multiple Linode Accounts",
+  "permissions": [
+    "http://*.linode.com/*",
+		"https://*.linode.com/*",
+		"http://linode.com/*",
+		"https://linode.com/*"
+  ],
+  "background_page" : "background.html",
+	"browser_action": {
+    "default_icon": "box1.gif",
+    "default_title": "Linode",
+    "default_popup": "popup.html"
+	},
+	"options_page": "options.html"
+}

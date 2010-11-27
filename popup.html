@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<script src="jquery-datalink/jquery.js"></script>
+		<script type="text/javascript">
+		$(function(){
+			$('#manager').click(function(){
+				chrome.tabs.create({url:'manager.html'})
+			})
+		});
+		</script>
+  </head>
+  <body>
+		<a href="#" id="manager">Manager</a>
+  </body>
+</html>

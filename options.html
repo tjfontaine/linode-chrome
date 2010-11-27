@@ -1,0 +1,40 @@
+<html>
+<head><title>Linode</title></head>
+<script src="jquery-datalink/jquery.js"></script>
+<script type="text/javascript">
+
+// Saves options to localStorage.
+function save_options() {
+	var keys = []
+	$('.api_key').each(function(i, v) {
+		keys.push($(v).val())
+	})
+
+	localStorage["api_keys"] = keys
+}
+
+// Restores select box state to saved value from localStorage.
+function restore_options() {
+  var k = localStorage["api_keys"];
+  if (!k) {
+    return;
+  }
+	k = k.split(',')
+	$.each(k, function(i, key) {
+		$('#api_keys_'+i).val(key)
+	})
+}
+
+</script>
+
+<body onload="restore_options()">
+
+API Keys<br/>
+<input type="text" id="api_keys_0" class="api_key"/><br/>
+<input type="text" id="api_keys_1" class="api_key"/><br/>
+<input type="text" id="api_keys_2" class="api_key"/><br/>
+<input type="text" id="api_keys_3" class="api_key"/><br/>
+<input type="text" id="api_keys_4" class="api_key"/><br/>
+<button onclick="save_options()">Save</button>
+</body>
+</html>
