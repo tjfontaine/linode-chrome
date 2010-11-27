@@ -38,6 +38,7 @@
       var cache = null;
       var keys = localStorage["api_keys"].split(',')
       var apis = []
+      function trigger_update(l) { for(k in l) { $(l).data(k, l[k]) } }
       $.each(keys, function(i, key)
       {
         if(key && key.length > 1)
@@ -54,6 +55,8 @@
         {
           var elm = $('#linode-'+l.LINODEID)
           elm.link(l, LINODE_OBJ_CONVERSION[l.key])
+          /* this shouldn't be necessary */
+          trigger_update(l)
         })
       }
       cache.fill(start)
