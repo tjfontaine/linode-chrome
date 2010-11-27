@@ -1,0 +1,9 @@
+[submodule "jquery-datalink"]
+	path = jquery-datalink
+	url = git://github.com/jquery/jquery-datalink.git
+[submodule "jquery-tmpl"]
+	path = jquery-tmpl
+	url = git://github.com/jquery/jquery-tmpl.git
+[submodule "linode-javascript"]
+	path = linode-javascript
+	url = git://github.com/tjfontaine/linode-javascript.git
