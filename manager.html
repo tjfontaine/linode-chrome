@@ -45,7 +45,7 @@
           apis.push(new LinodeApi(key))
         }
       })
-      cache = new Cache(apis);
+      cache = new LinodeCache(apis);
       function start()
       {
         var linodes = cache.getAll('LINODEID');
