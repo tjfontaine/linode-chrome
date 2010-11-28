@@ -23,7 +23,7 @@
 		}
 		</style>
 		<script type="text/x-jquery-tmpl" id="tmpl_linode_edit">
-		<div id="linode-container-${LINODEID}">
+		<div id="linode-container-${LINODEID}" class="dynamic_tab">
   		<form id="linode-${LINODEID}">
   			<ul>
   				<li>Label <input type="text" name="LABEL" value="${LABEL}" size=25 /></li>
@@ -49,6 +49,82 @@
   		</form>
 		</div>
 		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_domain_edit">
+		<div id="domain-container-${DOMAINID}" class="dynamic_tab">
+		  <form id="domain-${DOMAINID}">
+		    <ul>
+		      <li>${DOMAIN}</li>
+		      <li>Description <input type="text" name="DESCRIPTION" value="${DESCRIPTION}" /></li>
+		      <li>Type
+		        <select disabled="disabled" name="TYPE">
+		          <option value="master">Master</option>
+  		        <option value="slave">Slave</option>
+		        </select>
+		      </li>
+		      <li>SOA Email <input type="text" name="SOA_EMAIL" value="${SOA_EMAIL}" /></li>
+		      <li>Status
+		        <select name="STATUS">
+		          <option value="1">Active</option>
+		          <option value="2">Edit</option>
+		          <option value="3">Inactive</option>
+		        </select>
+		      </li>
+		      <li>TTL
+		        <select name="TTL_SEC">
+		          <option value="0">Default</option>
+		          <option value="300">300</option>
+		          <option value="3600">3600</option>
+		          <option value="7200">7200</option>
+		          <option value="14400">14400</option>
+		          <option value="28800">28800</option>
+		          <option value="57600">57600</option>
+		          <option value="86400">86400</option>
+		          <option value="172800">172800</option>
+              <option value="345600">345600</option>
+              <option value="604800">604800</option>
+              <option value="1209600">1209600</option>
+              <option value="2419200">2419200</option>
+		        </select>
+		      </li>
+		      <li>Refresh
+		        <select name="REFRESH_SEC">
+		          <option value="0">Default</option>
+		          <option value="300">300</option>
+		          <option value="3600">3600</option>
+		          <option value="7200">7200</option>
+		          <option value="14400">14400</option>
+		          <option value="28800">28800</option>
+		          <option value="57600">57600</option>
+		          <option value="86400">86400</option>
+		          <option value="172800">172800</option>
+              <option value="345600">345600</option>
+              <option value="604800">604800</option>
+              <option value="1209600">1209600</option>
+              <option value="2419200">2419200</option>
+		        </select>
+		      </li>
+		      <li>Expire
+		        <select name="EXPIRE_SEC">
+		          <option value="0">Default</option>
+		          <option value="300">300</option>
+		          <option value="3600">3600</option>
+		          <option value="7200">7200</option>
+		          <option value="14400">14400</option>
+		          <option value="28800">28800</option>
+		          <option value="57600">57600</option>
+		          <option value="86400">86400</option>
+		          <option value="172800">172800</option>
+              <option value="345600">345600</option>
+              <option value="604800">604800</option>
+              <option value="1209600">1209600</option>
+              <option value="2419200">2419200</option>
+		        </select>
+		      </li>
+		      <li><a href="#">Save</a></li>
+		    </ul>
+		  </form>
+		</div>
+		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_linode_list">
 		<tr>
 		  <td>${LABEL}</td>
@@ -60,7 +136,9 @@
 		<script type="text/x-jquery-tmpl" id="tmpl_domain_list">
 	  <tr>
 	    <td>${DOMAIN}</td>
-	    <td>${SOA_EMAIL}</td>
+	    <td>${TYPE}</td>
+	    <td>${$item.statusMap(STATUS)}</td>
+	    <td><a href="#" id="domain-edit-${DOMAINID}" class="domain_edit">edit</a></td>
 	  </tr>
 		</script>
 		<script type="text/javascript">
@@ -81,6 +159,15 @@
           link_item(elm, obj)
         })
       }
+      function find_tab(label) {
+        var pos = -1
+        $('#outer_tabs > div.dynamic_tab').each(function(i, e) {
+          if(e.id == label) {
+            pos = i + 2
+          }
+        })
+        return pos
+      }
       $.each(keys, function(i, key)
       {
         if(key && key.length > 1)
@@ -98,19 +185,47 @@
               return cache.status_map[s.toString()]
             }
           }).appendTo('#linodes')
-        $('#tmpl_domain_list').tmpl(domains, {'cache':cache}).appendTo('#domains')
+        $('#tmpl_domain_list').tmpl(domains, {
+          'statusMap': function(s) {
+            return cache.domain_status[s.toString()]
+          }
+        }).appendTo('#domains')
         $('.linode_edit').each(function(i, e){
           $(e).click(function(){
             var id = e.id.replace('linode-edit-', '')
             var linode = cache.get('LINODEID', parseInt(id))
-            $('#tmpl_linode_edit').tmpl([linode]).appendTo('#outer_tabs')
-            $('#outer_tabs').tabs('add', '#linode-container-'+id, linode.LABEL)
-            var pos = $('#outer_tabs').tabs('length')-1
-            $('#outer_tabs').tabs('select', pos)
-            link_item($('#linode-'+id), linode)
+            var pos = find_tab('linode-container-'+linode.LINODEID)
+            if(pos > -1)
+            {
+              $('#outer_tabs').tabs('select', pos)
+            }
+            else
+            {
+              $('#tmpl_linode_edit').tmpl([linode]).appendTo('#outer_tabs')
+              $('#outer_tabs').tabs('add', '#linode-container-'+id, linode.LABEL)
+              $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
+              link_item($('#linode-'+id), linode)  
+            }
           })
         })
-        iter_objs('domain', domains)
+        $('.domain_edit').each(function(i, e) {
+          $(e).click(function(){
+            var id = e.id.replace('domain-edit-', '')
+            var domain = cache.get('DOMAINID', parseInt(id))
+            var pos = find_tab('domain-container-'+domain.DOMAINID)
+            if(pos > -1)
+            {
+              $('#outer_tabs').tabs('select', pos)
+            }
+            else
+            {
+              $('#tmpl_domain_edit').tmpl([domain]).appendTo('#outer_tabs')
+              $('#outer_tabs').tabs('add', '#domain-container-'+id, domain.DOMAIN)
+              $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
+              link_item($('#domain-'+id), domain)              
+            }
+          })
+        })
       }
       cache.fill(start)
       $('#outer_tabs').tabs({
@@ -120,7 +235,6 @@
         },
       })
     });
-
 		</script>
   </head>
   <body>
