@@ -10,3 +10,6 @@
 [submodule "jquery-ui"]
 	path = jquery-ui
 	url = git://github.com/jquery/jquery-ui.git
+[submodule "ui.tabs.closable"]
+	path = ui.tabs.closable
+	url = git://github.com/andrewwatts/ui.tabs.closable.git

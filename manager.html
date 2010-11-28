@@ -13,6 +13,7 @@
   	<script src="jquery-ui/ui/jquery.ui.widget.js"></script>
   	<script src="jquery-ui/ui/jquery.ui.mouse.js"></script>
 		<script src="jquery-ui/ui/jquery.ui.tabs.js"></script>
+		<script src="ui.tabs.closable/ui.tabs.closable.js"></script>
 		<link rel="stylesheet" href="jquery-ui/themes/base/jquery.ui.all.css">
 		<style>
 		.horizontal_lists li {
@@ -21,27 +22,36 @@
 			padding-right: 20px;
 		}
 		</style>
+		<script type="text/x-jquery-tmpl" id="tmpl_linode_edit">
+		<div id="linode-container-${LINODEID}">
+  		<form id="linode-${LINODEID}">
+  			<ul>
+  				<li>Label <input type="text" name="LABEL" value="${LABEL}" size=25 /></li>
+  				<li>Status <input type="text" name="STATUS" value="${STATUS}" disabled="disabled" size=10 /></li>
+  				<li>Ram <input type="text" name="TOTALRAM" value="${TOTALRAM}" disabled="disabled" size=5 /></li>
+  				<li>HD <input type="text" name="TOTALHD" value="${TOTALHD}" disabled="disabled" size=5 /></li>
+  				<li>BW <input type="text" name="TOTALXFER" value="${TOTALXFER}" disabled="disabled" size=5 /></li>
+  				<li>Datacenter <input type="text" name="DATACENTERID" value="${DATACENTERID}" disabled="disabled" /></li>
+  				<li>Backups <input type="checkbox" name="BACKUPSENABLED" {{if BACKUPSENABLED}}checked="true"{{/if}} disabled="disabled" /></li>
+  				<li>Lassie <input type="checkbox" name="WATCHDOG" {{if WATCHDOG}}checked="true"{{/if}} disabled="disabled" /></li>
+  				<li><a href="#" class="linode_close_tab">Close</a></li>
+  			</ul>
+  		</form>
+		</div>
+		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_linode_list">
-		<form id="linode-${LINODEID}">
-			<ul style=>
-				<li>Label <input type="text" name="LABEL" value="${LABEL}" size=25 /></li>
-				<li>Status <input type="text" name="STATUS" value="${STATUS}" disabled="disabled" size=10 /></li>
-				<li>Ram <input type="text" name="TOTALRAM" value="${TOTALRAM}" disabled="disabled" size=5 /></li>
-				<li>HD <input type="text" name="TOTALHD" value="${TOTALHD}" disabled="disabled" size=5 /></li>
-				<li>BW <input type="text" name="TOTALXFER" value="${TOTALXFER}" disabled="disabled" size=5 /></li>
-				<li>Datacenter <input type="text" name="DATACENTERID" value="${DATACENTERID.LOCATION}" disabled="disabled" /></li>
-				<li>Backups <input type="checkbox" name="BACKUPSENABLED" {{if BACKUPSENABLED}}checked="true"{{/if}} disabled="disabled" /></li>
-				<li>Lassie <input type="checkbox" name="WATCHDOG" {{if WATCHDOG}}checked="true"{{/if}} disabled="disabled" /></li>
-			</ul>
-		</form>
+		<tr>
+		  <td>${LABEL}</td>
+		  <td>${$item.statusMap(STATUS)}</td>
+		  <td>${DATACENTERID.LOCATION}</td>
+		  <td><a href="#" id="linode-edit-${LINODEID}" class="linode_edit">edit</a></td>
+		</tr>
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_domain_list">
-		<form id="linode-${DOMAINID}">
-		  <ul>
-		    <li>Domain <input type="text" name="DOMAIN" value="${DOMAIN}" size=30 disabled="disabled" /></li>
-		    <li>SOA Email <input type="text" name="SOA_EMAIL" size=30 value="${SOA_EMAIL}" /></li>
-		  </ul>
-		</form>
+	  <tr>
+	    <td>${DOMAIN}</td>
+	    <td>${SOA_EMAIL}</td>
+	  </tr>
 		</script>
 		<script type="text/javascript">
     $(function()
@@ -73,13 +83,32 @@
       {
         var linodes = cache.getAll('LINODEID');
         var domains = cache.getAll('DOMAINID')
-        $('#tmpl_linode_list').tmpl(linodes).appendTo('#linodes')
-        $('#tmpl_domain_list').tmpl(domains).appendTo('#domains')
-        iter_objs('linode', linodes)
+        $('#tmpl_linode_list').tmpl(linodes, {
+          'statusMap': function(s) {
+              return cache.status_map[s.toString()]
+            }
+          }).appendTo('#linodes')
+        $('#tmpl_domain_list').tmpl(domains, {'cache':cache}).appendTo('#domains')
+        $('.linode_edit').each(function(i, e){
+          $(e).click(function(){
+            var id = e.id.replace('linode-edit-', '')
+            var linode = cache.get('LINODEID', parseInt(id))
+            $('#tmpl_linode_edit').tmpl([linode]).appendTo('#outer_tabs')
+            $('#outer_tabs').tabs('add', '#linode-container-'+id, linode.LABEL)
+            var pos = $('#outer_tabs').tabs('length')-1
+            $('#outer_tabs').tabs('select', pos)
+            link_item($('#linode-'+id), linode)
+          })
+        })
         iter_objs('domain', domains)
-        $('#outer_tabs').tabs()
       }
       cache.fill(start)
+      $('#outer_tabs').tabs({
+        closable: true,
+        closableClick: function(event, ui) {
+          return !$(ui.panel).hasClass('unclosable')
+        },
+      })
     });
 
 		</script>
@@ -87,12 +116,16 @@
   <body>
     <div id="outer_tabs">
       <ul>
-        <li><a href="#linodes">Linodes</a></li>
-        <li><a href="#domains">Domains</a></li>
+        <li><a href="#linodes_container">Linodes</a></li>
+        <li><a href="#domains_container">Domains</a></li>
       </ul>
-  		<div id="linodes" class="horizontal_lists">
+  		<div id="linodes_container" class="horizontal_lists unclosable">
+  		  <table id="linodes">
+  		  </table>
   		</div>
-  		<div id="domains" class="horizontal_lists">
+  		<div id="domains_container" class="horizontal_lists unclosable">
+  		  <table id="domains">
+  		  </table>
   		</div>
 	  </div>
   </body>
