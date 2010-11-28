@@ -27,6 +27,7 @@
   		<form id="linode-${LINODEID}">
   			<ul>
   				<li>Label <input type="text" name="LABEL" value="${LABEL}" size=25 /></li>
+  				<li>Display Group <input type="text" name="LPM_DISPLAYGROUP" value="${LPM_DISPLAYGROUP}" /></li>
   				<li>Status <input type="text" name="STATUS" value="${STATUS}" disabled="disabled" size=10 /></li>
   				<li>Ram <input type="text" name="TOTALRAM" value="${TOTALRAM}" disabled="disabled" size=5 /></li>
   				<li>HD <input type="text" name="TOTALHD" value="${TOTALHD}" disabled="disabled" size=5 /></li>
@@ -34,7 +35,16 @@
   				<li>Datacenter <input type="text" name="DATACENTERID" value="${DATACENTERID}" disabled="disabled" /></li>
   				<li>Backups <input type="checkbox" name="BACKUPSENABLED" {{if BACKUPSENABLED}}checked="true"{{/if}} disabled="disabled" /></li>
   				<li>Lassie <input type="checkbox" name="WATCHDOG" {{if WATCHDOG}}checked="true"{{/if}} disabled="disabled" /></li>
-  				<li><a href="#" class="linode_close_tab">Close</a></li>
+  				<li>Alerts
+  				  <ul>
+  				    <li>Disk <input type="checkbox" name="ALERT_DISKIO_ENABLED" /> Threshold <input type="text" name="ALERT_DISKIO_THRESHOLD" size=10 /></li>
+  				    <li>CPU <input type="checkbox" name="ALERT_CPU_ENABLED" /> Threshold <input type="text" name="ALERT_CPU_THRESHOLD" size=10 /></li>
+  				    <li>Bandwidth In <input type="checkbox" name="ALERT_BWIN_ENABLED" /> Threshold <input type="text" name="ALERT_BWIN_THRESHOLD" size=10 /></li>
+  				    <li>Bandwidth Out <input type="checkbox" name="ALERT_BWOUT_ENABLED" /> Threshold <input type="text" name="ALERT_BWOUT_THRESHOLD" size=10 /></li>
+  				    <li>Bandwidth Quota <input type="checkbox" name="ALERT_BWQUOTA_ENABLED" /> Threshold <input type="text" name="ALERT_BWQUOTA_THRESHOLD" size=10 /></li>
+  				  </ul>
+  				</li>
+  				<li><a href="#" class="linode_save">Save</a></li>
   			</ul>
   		</form>
 		</div>
