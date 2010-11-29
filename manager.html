@@ -9,22 +9,54 @@
 		<script src="linode-javascript/linode.api.js"></script>
 		<script src="linode-javascript/linode.cache.js"></script>
 		<script src="linode-javascript/linode.datalink.js"></script>
-		<script src="jquery-ui/ui/jquery.ui.core.js"></script>
+
+		<link rel="stylesheet" href="jquery-ui/themes/base/jquery.ui.all.css">		
+  	<script src="jquery-ui/ui/jquery.ui.core.js"></script>
   	<script src="jquery-ui/ui/jquery.ui.widget.js"></script>
   	<script src="jquery-ui/ui/jquery.ui.mouse.js"></script>
-		<script src="jquery-ui/ui/jquery.ui.tabs.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.accordion.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.autocomplete.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.button.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.datepicker.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.dialog.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.draggable.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.droppable.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.position.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.progressbar.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.resizable.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.selectable.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.slider.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.sortable.js"></script>
+  	<script src="jquery-ui/ui/jquery.ui.tabs.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.core.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.blind.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.bounce.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.clip.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.drop.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.explode.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.fold.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.highlight.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.pulsate.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.scale.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.shake.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.slide.js"></script>
+  	<script src="jquery-ui/ui/jquery.effects.transfer.js"></script>
+  	
 		<script src="ui.tabs.closable/ui.tabs.closable.js"></script>
-		<link rel="stylesheet" href="jquery-ui/themes/base/jquery.ui.all.css">
 		<style>
 		.horizontal_lists li {
 			display: inline;
 			list-style-type: none;
 			padding-right: 20px;
 		}
+		table {
+		  width: 100%;
+		}
 		</style>
 		<script type="text/x-jquery-tmpl" id="tmpl_linode_edit">
 		<div id="linode-container-${LINODEID}" class="dynamic_tab">
   		<form id="linode-${LINODEID}">
+  		  <input type="hidden" name="LINODEID" value="${LINODEID}" />
   			<ul>
   				<li>Label <input type="text" name="LABEL" value="${LABEL}" size=25 /></li>
   				<li>Display Group <input type="text" name="LPM_DISPLAYGROUP" value="${LPM_DISPLAYGROUP}" /></li>
@@ -65,39 +97,116 @@
     <option value="2419200">2419200</option>
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_resource_edit">
-	  <form id="resource-${RESOURCEID}">
-	    <input type="hidden" name="DOMAINID" value="${DOMAINID.DOMAINID}" />
-	    <input type="hidden" name="RESOURCEID" value="${RESOURCEID}" />
-	    <tr>
-  		  <td>
+		<ul>
+	    <form id="resource-${RESOURCEID}">
+	      <input type="hidden" name="DOMAINID" value="${DOMAINID.DOMAINID}" />
+	      <input type="hidden" name="RESOURCEID" value="${RESOURCEID}" />
+  		  <li>
   		    <select name="PROTOCOL">
   		      <option value=""></option>
   		      <option value="tcp">TCP</option>
   		      <option value="udp">UDP</option>
   		    </select>
-  		  </td>
-  		  <td><input type="text" name="NAME" value="${NAME}" /></td>
-  		  <td><input type="text" name="WEIGHT" value="${WEIGHT}" /></td>
-  		  <td><input type="text" name="PRIORITY" value="${PRIORITY}" /></td>
-  		  <td>
+  		  </li>
+  		  <li><input type="text" name="NAME" value="${NAME}" /></li>
+  		  <li><input type="text" name="WEIGHT" value="${WEIGHT}" /></li>
+  		  <li><input type="text" name="PRIORITY" value="${PRIORITY}" /></li>
+  		  <li>
   		    <select name="TTL_SEC">
   		    {{tmpl "#tmpl_ttl_option"}}
   		    </select>
-  		  </td>
-  		  <td>
+  		  </li>
+  		  <li>
   		    <select name="TYPE">
   		      <option value=""></option>
+  		      <option value="ns">MX</option>
   		      <option value="mx">MX</option>
   		      <option value="a">A</option>
   		      <option value="cname">CNAME</option>
   		      <option value="txt">TXT</option>
   		      <option value="srv">SRV</option>
   		    </select>
-  		  </td>
-  		  <td><input type="text" name="TARGET" value="${TARGET}" /></td>
-		  </tr>
-		</form>
+  		  </li>
+  		  <li><input type="text" name="TARGET" value="${TARGET}" /></li>
+		  </form>
+		</ul>
 		</script>
+    <script type="text/x-jquery-tmpl" id="tmpl_resource_a">
+    <tr>
+      <td>${NAME}</td>
+      <td>${TARGET}</td>
+      <td>${TTL_SEC}</td>
+      <td>
+        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        |
+        <a href="#" id="" class="resource-delete">Delete</a>
+      </td>
+    </tr>
+    </script>
+    <script type="text/x-jquery-tmpl" id="tmpl_resource_mx">
+    <tr>
+      <td>${TARGET}</td>
+      <td>${PRIORITY}</td>
+      <td>${TTL_SEC}</td>
+      <td>
+        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        |
+        <a href="#" id="" class="resource-delete">Delete</a>
+      </td>
+    </tr>
+    </script>
+    <script type="text/x-jquery-tmpl" id="tmpl_resource_cname">
+    <tr>
+      <td>${NAME}</td>
+      <td>${TARGET}</td>
+      <td>${TTL_SEC}</td>
+      <td>
+        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        |
+        <a href="#" id="" class="resource-delete">Delete</a>
+      </td>
+    </tr>
+    </script>
+    <script type="text/x-jquery-tmpl" id="tmpl_resource_txt">
+    <tr>
+      <td>${NAME}</td>
+      <td>${TARGET}</td>
+      <td>${TTL_SEC}</td>
+      <td>
+        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        |
+        <a href="#" id="" class="resource-delete">Delete</a>
+      </td>
+    </tr>
+    </script>
+    <script type="text/x-jquery-tmpl" id="tmpl_resource_srv">
+    <tr>
+      <td>${NAME}</td>
+      <td>${PRIORITY}</td>
+      <td>${WEIGHT}</td>
+      <td>${PROTOCOL}</td>
+      <td>${PORT}</td>
+      <td>${TARGET}</td>
+      <td>${TTL_SEC}</td>
+      <td>
+        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        |
+        <a href="#" id="" class="resource-delete">Delete</a>
+      </td>
+    </tr>
+    </script>
+		<script type="text/x-jquery-tmpl" id="tmpl_resource_ns">
+    <tr>
+      <td>${NAME}</td>
+      <td>${TARGET}</td>
+      <td>${TTL_SEC}</td>
+      <td>
+        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        |
+        <a href="#" id="" class="resource-delete">Delete</a>
+      </td>
+    </tr>
+    </script>
 		<script type="text/x-jquery-tmpl" id="tmpl_domain_edit">
 		<div id="domain-container-${DOMAINID}" class="dynamic_tab">
 		  <form id="domain-${DOMAINID}">
@@ -136,8 +245,68 @@
 		      </li>
 		      <li><a href="#">Save</a></li>
 		    </ul>
-		    <table id="domain-resource-list-${DOMAINID}">
-        </table>
+		    NS Records<br/>
+		    <table id="domain-resource-ns-${DOMAINID}" class="resource_list">
+		      <tr>
+		        <td>Name Server</td>
+		        <td>Subdomain</td>
+		        <td>TTL</td>
+		        <td>Action</td>
+		      </tr>
+		    </table>
+		    <br/>
+		    MX Records<br/>
+		    <table id="domain-resource-mx-${DOMAINID}" class="resource_list">
+		      <tr>
+		        <td>Mail Server</td>
+		        <td>Preference</td>
+		        <td>TTL</td>
+		        <td>Action</td>
+		      </tr>
+		    </table>
+		    <br/>
+		    A Records<br/>
+  	    <table id="domain-resource-a-${DOMAINID}" class="resource_list">
+  	      <tr>
+  	        <td>Hostname</td>
+  	        <td>IP</td>
+  	        <td>TTL</td>
+  	        <td>Action</td>
+  	      </tr>
+  	    </table>
+  	    <br/>
+  	    CNAME Records<br/>
+		    <table id="domain-resource-cname-${DOMAINID}" class="resource_list">
+		      <tr>
+  		      <td>Hostname</td>
+            <td>Alias To</td>
+            <td>TTL</td>
+            <td>Action</td>
+          </tr>
+		    </table>
+		    <br/>
+		    SRV Records<br/>
+		    <table id="domain-resource-srv-${DOMAINID}" class="resource_list">
+		      <tr>
+		        <td>Service</td>
+		        <td>Priority</td>
+		        <td>Weight</td>
+		        <td>Port</td>
+		        <td>Target</td>
+		        <td>TTL</td>
+		        <td>Action</td>
+		      </tr>
+		    </table>
+		    <br/>
+		    TXT Records<br/>
+		    <table id="domain-resource-txt-${DOMAINID}" class="resource_list">
+		      <tr>
+		        <td>Name</td>
+		        <td>Target</td>
+		        <td>TTL</td>
+		        <td>Action</td>
+		      </tr>
+		    </table>
 		  </form>
 		</div>
 		</script>
@@ -159,20 +328,35 @@
 		</script>
 		<script type="text/javascript">
     var cache = chrome.extension.getBackgroundPage().cache;
+    function link_item(elm, item) {
+      $(elm).link(item, LINODE_OBJ_CONVERSION[item.key])
+      for(k in item) {
+        $(item).data(k, item[k])
+      }
+    }
+    function iter_objs(shortname, objs) {
+      $.each(objs, function(i, obj) {
+        var elm = $('#'+shortname+'-'+obj[obj.key])
+        link_item(elm, obj)
+      })
+    }
+    function resourceEdit(rid) {
+      var resource = cache.get('RESOURCEID', rid)
+      $('#edit_dialog').html('')
+      $('#tmpl_resource_edit').tmpl([resource]).appendTo('#edit_dialog')
+      link_item($('#resource-'+rid), resource)
+      $('#edit_dialog').dialog({
+        modal: true,
+        minWidth: 400,
+        minHeight: 500,
+        buttons: {
+          cancel: function() { $(this).dialog('close'); },
+          save: function() { $(this).dialog('close'); }
+        },
+      })
+    }
     $(function()
-    {      
-      function link_item(elm, item) {
-        $(elm).link(item, LINODE_OBJ_CONVERSION[item.key])
-        for(k in item) {
-          $(item).data(k, item[k])
-        }
-      }
-      function iter_objs(shortname, objs) {
-        $.each(objs, function(i, obj) {
-          var elm = $('#'+shortname+'-'+obj[obj.key])
-          link_item(elm, obj)
-        })
-      }
+    {
       function find_tab(label) {
         var pos = -1
         $('#outer_tabs > div.dynamic_tab').each(function(i, e) {
@@ -227,16 +411,36 @@
             }
             else
             {
-              var resources = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID)
+              var nsrec = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "ns")
+              })
+              var arec = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "a")
+              })
+              var mxrec = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "mx")
+              })
+              var cnamerec = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "cname")
+              })
+              var srvrec = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "srv")
+              })
+              var txtrec = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "txt")
               })
               
               $('#tmpl_domain_edit').tmpl([domain]).appendTo('#outer_tabs')
-              $('#tmpl_resource_edit').tmpl(resources).appendTo('#domain-resource-list-'+id)
+              $('#tmpl_resource_ns').tmpl(nsrec).appendTo('#domain-resource-ns-'+id)
+              $('#tmpl_resource_a').tmpl(arec).appendTo('#domain-resource-a-'+id)
+              $('#tmpl_resource_mx').tmpl(mxrec).appendTo('#domain-resource-mx-'+id)
+              $('#tmpl_resource_cname').tmpl(cnamerec).appendTo('#domain-resource-cname-'+id)
+              $('#tmpl_resource_srv').tmpl(srvrec).appendTo('#domain-resource-srv-'+id)
+              $('#tmpl_resource_txt').tmpl(txtrec).appendTo('#domain-resource-txt-'+id)
               $('#outer_tabs').tabs('add', '#domain-container-'+id, domain.DOMAIN)
               $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
               link_item($('#domain-'+id), domain)
-              iter_objs('resource', resources)
+              //iter_objs('resource', resources)
             }
           })
         })
@@ -260,6 +464,7 @@
             length -= 1
           }
         }
+
         cache.cache = {}
         cache.fill(start)
       })
@@ -270,6 +475,7 @@
   </head>
   <body>
     <a href="#" id="refresh_cache">Refresh Cache</a>
+    <div id="edit_dialog"></div>
     <div id="outer_tabs">
       <ul>
         <li><a href="#linodes_container">Linodes</a></li>
