@@ -49,10 +49,57 @@
   		</form>
 		</div>
 		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_ttl_option">
+		<option value="0">Default</option>
+    <option value="300">300</option>
+    <option value="3600">3600</option>
+    <option value="7200">7200</option>
+    <option value="14400">14400</option>
+    <option value="28800">28800</option>
+    <option value="57600">57600</option>
+    <option value="86400">86400</option>
+    <option value="172800">172800</option>
+    <option value="345600">345600</option>
+    <option value="604800">604800</option>
+    <option value="1209600">1209600</option>
+    <option value="2419200">2419200</option>
+		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_resource_edit">
+	  <form id="resource-${RESOURCEID}">
+	    <ul class="horizontal_list">
+  		  <li>
+  		    <select name="PROTOCOL">
+  		      <option value=""></option>
+  		      <option value="tcp">TCP</option>
+  		      <option value="udp">UDP</option>
+  		    </select>
+  		  </li>
+  		  <li><input type="text" name="NAME" value="${NAME}" /></li>
+  		  <li><input type="text" name="WEIGHT" value="${WEIGHT}" /></li>
+  		  <li><input type="text" name="PRIORITY" value="${PRIORITY}" /></li>
+  		  <li>
+  		    <select name="TTL_SEC">
+  		    {{tmpl "#tmpl_ttl_option"}}
+  		    </select>
+  		  </li>
+  		  <li>
+  		    <select name="TYPE">
+  		      <option value=""></option>
+  		      <option value="mx">MX</option>
+  		      <option value="a">A</option>
+  		      <option value="cname">CNAME</option>
+  		      <option value="txt">TXT</option>
+  		      <option value="srv">SRV</option>
+  		    </select>
+  		  </li>
+  		  <li><input type="text" name="TARGET" value="${TARGET}" /></li>
+		  </ul>
+		</form>
+		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_domain_edit">
 		<div id="domain-container-${DOMAINID}" class="dynamic_tab">
 		  <form id="domain-${DOMAINID}">
-		    <ul>
+		    <ul class="horizontal_lists">
 		      <li>${DOMAIN}</li>
 		      <li>Description <input type="text" name="DESCRIPTION" value="${DESCRIPTION}" /></li>
 		      <li>Type
@@ -71,57 +118,24 @@
 		      </li>
 		      <li>TTL
 		        <select name="TTL_SEC">
-		          <option value="0">Default</option>
-		          <option value="300">300</option>
-		          <option value="3600">3600</option>
-		          <option value="7200">7200</option>
-		          <option value="14400">14400</option>
-		          <option value="28800">28800</option>
-		          <option value="57600">57600</option>
-		          <option value="86400">86400</option>
-		          <option value="172800">172800</option>
-              <option value="345600">345600</option>
-              <option value="604800">604800</option>
-              <option value="1209600">1209600</option>
-              <option value="2419200">2419200</option>
+		        {{tmpl "#tmpl_ttl_option"}}
 		        </select>
 		      </li>
 		      <li>Refresh
 		        <select name="REFRESH_SEC">
-		          <option value="0">Default</option>
-		          <option value="300">300</option>
-		          <option value="3600">3600</option>
-		          <option value="7200">7200</option>
-		          <option value="14400">14400</option>
-		          <option value="28800">28800</option>
-		          <option value="57600">57600</option>
-		          <option value="86400">86400</option>
-		          <option value="172800">172800</option>
-              <option value="345600">345600</option>
-              <option value="604800">604800</option>
-              <option value="1209600">1209600</option>
-              <option value="2419200">2419200</option>
+		        {{tmpl "#tmpl_ttl_option"}}
 		        </select>
 		      </li>
 		      <li>Expire
 		        <select name="EXPIRE_SEC">
-		          <option value="0">Default</option>
-		          <option value="300">300</option>
-		          <option value="3600">3600</option>
-		          <option value="7200">7200</option>
-		          <option value="14400">14400</option>
-		          <option value="28800">28800</option>
-		          <option value="57600">57600</option>
-		          <option value="86400">86400</option>
-		          <option value="172800">172800</option>
-              <option value="345600">345600</option>
-              <option value="604800">604800</option>
-              <option value="1209600">1209600</option>
-              <option value="2419200">2419200</option>
+		        {{tmpl "#tmpl_ttl_option"}}
 		        </select>
 		      </li>
 		      <li><a href="#">Save</a></li>
 		    </ul>
+		    <ul id="domain-resource-list-${DOMAINID}">
+		      {{tmpl(resources) "#tmpl_resource_edit"}}
+        </ul>
 		  </form>
 		</div>
 		</script>
@@ -213,16 +227,26 @@
             var id = e.id.replace('domain-edit-', '')
             var domain = cache.get('DOMAINID', parseInt(id))
             var pos = find_tab('domain-container-'+domain.DOMAINID)
+            
             if(pos > -1)
             {
               $('#outer_tabs').tabs('select', pos)
             }
             else
             {
+              domain.resources = []
+              $.each(cache.getAll('RESOURCEID'), function(i, r) {
+                if(r.DOMAINID && r.DOMAINID.DOMAINID == domain.DOMAINID) {
+                  domain.resources.push(r)
+                }
+              })
+              domain.resources = domain.resources.slice()
+              
               $('#tmpl_domain_edit').tmpl([domain]).appendTo('#outer_tabs')
               $('#outer_tabs').tabs('add', '#domain-container-'+id, domain.DOMAIN)
               $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
-              link_item($('#domain-'+id), domain)              
+              link_item($('#domain-'+id), domain)
+              iter_objs('resource', domain.resources)
             }
           })
         })
