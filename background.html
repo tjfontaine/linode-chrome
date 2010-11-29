@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
+		<script src="jquery-datalink/jquery.js"></script>
+		<script src="jquery.json.js"></script>
+		<script src="linode-javascript/linode.api.js"></script>
+		<script src="linode-javascript/linode.cache.js"></script>
+    <script type="text/javascript">
+    var keys = localStorage["api_keys"].split(',')
+    var apis = []
+    $.each(keys, function(i, key)
+    {
+      if(key && key.length > 1)
+      {
+        apis.push(new LinodeApi(key))
+      }
+    })
+    cache = new LinodeCache(apis);
+    cache.fill(function(){})
+    </script>
   </head>
   <body>
   </body>

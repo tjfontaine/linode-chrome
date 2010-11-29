@@ -66,23 +66,25 @@
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_resource_edit">
 	  <form id="resource-${RESOURCEID}">
-	    <ul class="horizontal_list">
-  		  <li>
+	    <input type="hidden" name="DOMAINID" value="${DOMAINID.DOMAINID}" />
+	    <input type="hidden" name="RESOURCEID" value="${RESOURCEID}" />
+	    <tr>
+  		  <td>
   		    <select name="PROTOCOL">
   		      <option value=""></option>
   		      <option value="tcp">TCP</option>
   		      <option value="udp">UDP</option>
   		    </select>
-  		  </li>
-  		  <li><input type="text" name="NAME" value="${NAME}" /></li>
-  		  <li><input type="text" name="WEIGHT" value="${WEIGHT}" /></li>
-  		  <li><input type="text" name="PRIORITY" value="${PRIORITY}" /></li>
-  		  <li>
+  		  </td>
+  		  <td><input type="text" name="NAME" value="${NAME}" /></td>
+  		  <td><input type="text" name="WEIGHT" value="${WEIGHT}" /></td>
+  		  <td><input type="text" name="PRIORITY" value="${PRIORITY}" /></td>
+  		  <td>
   		    <select name="TTL_SEC">
   		    {{tmpl "#tmpl_ttl_option"}}
   		    </select>
-  		  </li>
-  		  <li>
+  		  </td>
+  		  <td>
   		    <select name="TYPE">
   		      <option value=""></option>
   		      <option value="mx">MX</option>
@@ -91,15 +93,16 @@
   		      <option value="txt">TXT</option>
   		      <option value="srv">SRV</option>
   		    </select>
-  		  </li>
-  		  <li><input type="text" name="TARGET" value="${TARGET}" /></li>
-		  </ul>
+  		  </td>
+  		  <td><input type="text" name="TARGET" value="${TARGET}" /></td>
+		  </tr>
 		</form>
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_domain_edit">
 		<div id="domain-container-${DOMAINID}" class="dynamic_tab">
 		  <form id="domain-${DOMAINID}">
-		    <ul class="horizontal_lists">
+		    <input type="hidden" name="DOMAINID" value="${DOMAINID}" />
+		    <ul>
 		      <li>${DOMAIN}</li>
 		      <li>Description <input type="text" name="DESCRIPTION" value="${DESCRIPTION}" /></li>
 		      <li>Type
@@ -133,9 +136,8 @@
 		      </li>
 		      <li><a href="#">Save</a></li>
 		    </ul>
-		    <ul id="domain-resource-list-${DOMAINID}">
-		      {{tmpl(resources) "#tmpl_resource_edit"}}
-        </ul>
+		    <table id="domain-resource-list-${DOMAINID}">
+        </table>
 		  </form>
 		</div>
 		</script>
@@ -143,7 +145,7 @@
 		<tr>
 		  <td>${LABEL}</td>
 		  <td>${$item.statusMap(STATUS)}</td>
-		  <td>${DATACENTERID.LOCATION}</td>
+		  <td>{{if DATACENTERID }}${DATACENTERID.LOCATION}{{/if}}</td>
 		  <td><a href="#" id="linode-edit-${LINODEID}" class="linode_edit">edit</a></td>
 		</tr>
 		</script>
@@ -156,11 +158,9 @@
 	  </tr>
 		</script>
 		<script type="text/javascript">
+    var cache = chrome.extension.getBackgroundPage().cache;
     $(function()
-    {
-      var cache = null;
-      var keys = localStorage["api_keys"].split(',')
-      var apis = []
+    {      
       function link_item(elm, item) {
         $(elm).link(item, LINODE_OBJ_CONVERSION[item.key])
         for(k in item) {
@@ -182,14 +182,7 @@
         })
         return pos
       }
-      $.each(keys, function(i, key)
-      {
-        if(key && key.length > 1)
-        {
-          apis.push(new LinodeApi(key))
-        }
-      })
-      cache = new LinodeCache(apis);
+
       function start()
       {
         var linodes = cache.getAll('LINODEID');
@@ -234,30 +227,29 @@
             }
             else
             {
-              domain.resources = []
-              $.each(cache.getAll('RESOURCEID'), function(i, r) {
-                if(r.DOMAINID && r.DOMAINID.DOMAINID == domain.DOMAINID) {
-                  domain.resources.push(r)
-                }
+              var resources = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID)
               })
-              domain.resources = domain.resources.slice()
               
               $('#tmpl_domain_edit').tmpl([domain]).appendTo('#outer_tabs')
+              $('#tmpl_resource_edit').tmpl(resources).appendTo('#domain-resource-list-'+id)
               $('#outer_tabs').tabs('add', '#domain-container-'+id, domain.DOMAIN)
               $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
               link_item($('#domain-'+id), domain)
-              iter_objs('resource', domain.resources)
+              iter_objs('resource', resources)
             }
           })
         })
       }
-      cache.fill(start)
+
       $('#outer_tabs').tabs({
         closable: true,
         closableClick: function(event, ui) {
           return !$(ui.panel).hasClass('unclosable')
         },
       })
+      
+      start()
     });
 		</script>
   </head>
