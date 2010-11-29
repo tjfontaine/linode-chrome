@@ -249,11 +249,27 @@
         },
       })
       
+      $('#refresh_cache').click(function() {
+        $('#linodes').html('')
+        $('#domains').html('')
+        var length = $('#outer_tabs').tabs('length')
+        if(length > 2) {
+          length -= 1
+          while(length > 1) {
+            $('#outer_tabs').tabs('remove', length)
+            length -= 1
+          }
+        }
+        cache.cache = {}
+        cache.fill(start)
+      })
+      
       start()
     });
 		</script>
   </head>
   <body>
+    <a href="#" id="refresh_cache">Refresh Cache</a>
     <div id="outer_tabs">
       <ul>
         <li><a href="#linodes_container">Linodes</a></li>
