@@ -101,22 +101,22 @@
 	    <form id="resource-${RESOURCEID}">
 	      <input type="hidden" name="DOMAINID" value="${DOMAINID.DOMAINID}" />
 	      <input type="hidden" name="RESOURCEID" value="${RESOURCEID}" />
-  		  <li>
+  		  <li>Protocol
   		    <select name="PROTOCOL">
   		      <option value=""></option>
   		      <option value="tcp">TCP</option>
   		      <option value="udp">UDP</option>
   		    </select>
   		  </li>
-  		  <li><input type="text" name="NAME" value="${NAME}" /></li>
-  		  <li><input type="text" name="WEIGHT" value="${WEIGHT}" /></li>
-  		  <li><input type="text" name="PRIORITY" value="${PRIORITY}" /></li>
-  		  <li>
+  		  <li>Name <input type="text" name="NAME" value="${NAME}" /></li>
+  		  <li>Weight <input type="text" name="WEIGHT" value="${WEIGHT}" /></li>
+  		  <li>Priority <input type="text" name="PRIORITY" value="${PRIORITY}" /></li>
+  		  <li>TTL
   		    <select name="TTL_SEC">
   		    {{tmpl "#tmpl_ttl_option"}}
   		    </select>
   		  </li>
-  		  <li>
+  		  <li>TYPE
   		    <select name="TYPE">
   		      <option value=""></option>
   		      <option value="ns">MX</option>
@@ -127,7 +127,7 @@
   		      <option value="srv">SRV</option>
   		    </select>
   		  </li>
-  		  <li><input type="text" name="TARGET" value="${TARGET}" /></li>
+  		  <li>TARGET <input type="text" name="TARGET" value="${TARGET}" /></li>
 		  </form>
 		</ul>
 		</script>
