@@ -245,69 +245,80 @@
 		      </li>
 		      <li><a href="#">Save</a></li>
 		    </ul>
-		    NS Records<br/>
-		    <table id="domain-resource-ns-${DOMAINID}" class="resource_list">
-		      <tr>
-		        <td>Name Server</td>
-		        <td>Subdomain</td>
-		        <td>TTL</td>
-		        <td>Action</td>
-		      </tr>
-		    </table>
-		    <br/>
-		    MX Records<br/>
-		    <table id="domain-resource-mx-${DOMAINID}" class="resource_list">
-		      <tr>
-		        <td>Mail Server</td>
-		        <td>Preference</td>
-		        <td>TTL</td>
-		        <td>Action</td>
-		      </tr>
-		    </table>
-		    <br/>
-		    A Records<br/>
-  	    <table id="domain-resource-a-${DOMAINID}" class="resource_list">
-  	      <tr>
-  	        <td>Hostname</td>
-  	        <td>IP</td>
-  	        <td>TTL</td>
-  	        <td>Action</td>
-  	      </tr>
-  	    </table>
-  	    <br/>
-  	    CNAME Records<br/>
-		    <table id="domain-resource-cname-${DOMAINID}" class="resource_list">
-		      <tr>
-  		      <td>Hostname</td>
-            <td>Alias To</td>
-            <td>TTL</td>
-            <td>Action</td>
-          </tr>
-		    </table>
-		    <br/>
-		    SRV Records<br/>
-		    <table id="domain-resource-srv-${DOMAINID}" class="resource_list">
-		      <tr>
-		        <td>Service</td>
-		        <td>Priority</td>
-		        <td>Weight</td>
-		        <td>Port</td>
-		        <td>Target</td>
-		        <td>TTL</td>
-		        <td>Action</td>
-		      </tr>
-		    </table>
-		    <br/>
-		    TXT Records<br/>
-		    <table id="domain-resource-txt-${DOMAINID}" class="resource_list">
-		      <tr>
-		        <td>Name</td>
-		        <td>Target</td>
-		        <td>TTL</td>
-		        <td>Action</td>
-		      </tr>
-		    </table>
 		  </form>
+	    <div class="resources_tabs">
+	      <ul>
+	        <li><a href="#resources-ns-${DOMAINID}">NS Records</a></li>
+	        <li><a href="#resources-mx-${DOMAINID}">MX Records</a></li>
+	        <li><a href="#resources-a-${DOMAINID}">A Records</a></li>
+	        <li><a href="#resources-cname-${DOMAINID}">CNAME Records</a></li>
+	        <li><a href="#resources-srv-${DOMAINID}">SRV Records</a></li>
+	        <li><a href="#resources-txt-${DOMAINID}">TXT Records</a></li>
+	      </ul>
+	      <div id="resources-ns-${DOMAINID}">
+  		    <table id="domain-resource-ns-${DOMAINID}" class="resource_list">
+  		      <tr>
+  		        <td>Name Server</td>
+  		        <td>Subdomain</td>
+  		        <td>TTL</td>
+  		        <td>Action</td>
+  		      </tr>
+  		    </table>
+		    </div>
+		    <div id="resources-mx-${DOMAINID}">
+  		    <table id="domain-resource-mx-${DOMAINID}" class="resource_list">
+  		      <tr>
+  		        <td>Mail Server</td>
+  		        <td>Preference</td>
+  		        <td>TTL</td>
+  		        <td>Action</td>
+  		      </tr>
+  		    </table>
+		    </div>
+		    <div id="resources-a-${DOMAINID}">
+  		    <table id="domain-resource-a-${DOMAINID}" class="resource_list">
+    	      <tr>
+    	        <td>Hostname</td>
+    	        <td>IP</td>
+    	        <td>TTL</td>
+    	        <td>Action</td>
+    	      </tr>
+    	    </table>
+		    </div>
+		    <div id="resources-cname-${DOMAINID}">
+  		    <table id="domain-resource-cname-${DOMAINID}" class="resource_list">
+  		      <tr>
+    		      <td>Hostname</td>
+              <td>Alias To</td>
+              <td>TTL</td>
+              <td>Action</td>
+            </tr>
+  		    </table>
+		    </div>
+		    <div id="resources-srv-${DOMAINID}">
+  		    <table id="domain-resource-srv-${DOMAINID}" class="resource_list">
+  		      <tr>
+  		        <td>Service</td>
+  		        <td>Priority</td>
+  		        <td>Weight</td>
+  		        <td>Port</td>
+  		        <td>Target</td>
+  		        <td>TTL</td>
+  		        <td>Action</td>
+  		      </tr>
+  		    </table>
+		    </div>
+		    <div id="resources-txt-${DOMAINID}">
+  		    <table id="domain-resource-txt-${DOMAINID}" class="resource_list">
+  		      <tr>
+  		        <td>Name</td>
+  		        <td>Target</td>
+  		        <td>TTL</td>
+  		        <td>Action</td>
+  		      </tr>
+  		    </table>
+		    </div>
+	    </div>
 		</div>
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_linode_list">
@@ -326,6 +337,7 @@
 	    <td><a href="#" id="domain-edit-${DOMAINID}" class="domain_edit">edit</a></td>
 	  </tr>
 		</script>
+		
 		<script type="text/javascript">
     var cache = chrome.extension.getBackgroundPage().cache;
     function link_item(elm, item) {
@@ -349,6 +361,7 @@
         modal: true,
         minWidth: 400,
         minHeight: 500,
+        title: 'Edit Resource',
         buttons: {
           cancel: function() { $(this).dialog('close'); },
           save: function() { $(this).dialog('close'); }
@@ -431,16 +444,19 @@
               })
               
               $('#tmpl_domain_edit').tmpl([domain]).appendTo('#outer_tabs')
+              
               $('#tmpl_resource_ns').tmpl(nsrec).appendTo('#domain-resource-ns-'+id)
               $('#tmpl_resource_a').tmpl(arec).appendTo('#domain-resource-a-'+id)
               $('#tmpl_resource_mx').tmpl(mxrec).appendTo('#domain-resource-mx-'+id)
               $('#tmpl_resource_cname').tmpl(cnamerec).appendTo('#domain-resource-cname-'+id)
               $('#tmpl_resource_srv').tmpl(srvrec).appendTo('#domain-resource-srv-'+id)
               $('#tmpl_resource_txt').tmpl(txtrec).appendTo('#domain-resource-txt-'+id)
+              
               $('#outer_tabs').tabs('add', '#domain-container-'+id, domain.DOMAIN)
               $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
               link_item($('#domain-'+id), domain)
               //iter_objs('resource', resources)
+              $('.resources_tabs').tabs()
             }
           })
         })
