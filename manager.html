@@ -95,7 +95,7 @@
 		<tr>
 		  <td>${LABEL}</td>
 		  <td>
-		    <a href="#">Edit</a>
+		    <a href="#" onClick="objEdit('CONFIGID', 'config', ${CONFIGID});">Edit</a>
 		    |
 		    <a href="#">Delete</a>
 		  </td>
@@ -105,15 +105,58 @@
 		<tr>
 		  <td>${LABEL}</td>
 		  <td>
-		    <a href="#">Edit</a>
+		    <a href="#" onClick="objEdit('DISKID', 'disk', ${DISKID});">Edit</a>
 		    |
 		    <a href="#">Delete</a>
 		  </td>
 		</tr>
 		</script>
-		<script type="text/x-jquery-tmpl" id="tmpl_configs_edit">
+		<script type="text/x-jquery-tmpl" id="tmpl_config_edit">
+		<ul>
+  		<form id="config-${CONFIGID}">
+  		  <input type="hidden" name="LINODEID" value="${LINODEID.LINODEID}" />
+  		  <input type="hidden" name="CONFIGID" value="${CONFIGID}" />
+  		  <li>Label <input type="text" name="LABEL" value="${LABEL}" /></li>
+  		  <li>Notes <input type="text" name="COMMENTS" value="${COMMENTS}" /></li>
+  		  <li>Kernel <input type="text" name="KERNELID" value="${KERNELID.KERNELID}" /></li>
+  		  <li>Run Level <input type="text" name="RUNLEVEL" value="${RUNLEVEL}" /></li>
+  		  <li>RAM Limit <input type="text" name="RAMLIMIT" value="${RAMLIMIT}" /></li>
+  		  <li>Disk List <input type="text" name="DISKLIST" value="${DISKLIST}" /></li>
+  		  <li>Root Device Custom <input type="text" name="ROOTDEVICECUSTOM" value="${ROOTDEVICECUSTOM}" /></li>
+  		  <li>Root Device Number <input type="text" name="ROOTDEVICENUM" value="${ROOTDEVICENUM}" />
+  		    Read Only <input type="checkbox" name="ROOTDEVICERO" />
+  		  </li>
+  		  <li>Rescue <input type="checkbox" name="ISRESCUE" /></li>
+  		  <ul>Helpers
+  		    <li>Xenify Distro <input type="checkbox" name="HELPER_XEN" /></li>
+  		    <li>Disable updatedb <input type="checkbox" name="HELPER_DISABLEUPDATEDB" /></li>
+  		    <li>modules.dep Helper <input type="checkbox" name="HELPER_DEPMOD" /></li>
+  		    <li>Automount devtmpfs <input type="checkbox" name="DEVTMPFS_AUTOMOUNT" /></li>
+  		  </ul>
+  		</form>
+		</ul>
 		</script>
-		<script type="text/x-jquery-tmpl" id="tmpl_disks_edit">
+		<script type="text/x-jquery-tmpl" id="tmpl_disk_edit">
+		<ul>
+		  <form id="disk-${DISKID}">
+		    <input type="hidden" name="LINODEID" value="${LINODEID.LINODEID}" />
+		    <input type="hidden" name="DISKID" value="${DISKID}" />
+		    <li>Label <input type="text" name="LABEL" value="${LABEL}" /></li>
+		    <li>Type
+		      <select name="TYPE">
+		        <option value="ext3">Ext3</option>
+		        <option value="swap">Swap</option>
+		        <option value="raw">Raw</option>
+		        <option value="initrd">initrd</option>
+		      </select>
+		    </li>
+		    <li>Size <input type="text" name="SIZE" value="${SIZE}" /></li>
+		    <li>Read Only <input type="checkbox" name="ISREADONLY" /></li>
+		    <li>Status <input type="text" name="STATUS" value="${STATUS}" /></li>
+		    <li>Created <input type="text" name="CREATE_DT" value="${CREATE_DT}" disabled="disabled" /></li>
+		    <li>Updated <input type="text" name="UPDATE_DT" value="${UPDATE_DT}" disabled="disabled" /></li>
+		  </form>
+		</ul>
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_ttl_option">
 		<option value="0">Default</option>
@@ -171,7 +214,7 @@
       <td>${TARGET}</td>
       <td>${TTL_SEC}</td>
       <td>
-        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        <a href="#" onClick="objEdit('RESOURCEID', 'resource', ${RESOURCEID});">Edit</a>
         |
         <a href="#" id="" class="resource-delete">Delete</a>
       </td>
@@ -183,7 +226,7 @@
       <td>${PRIORITY}</td>
       <td>${TTL_SEC}</td>
       <td>
-        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        <a href="#" onClick="objEdit('RESOURCEID', 'resource', ${RESOURCEID});">Edit</a>
         |
         <a href="#" id="" class="resource-delete">Delete</a>
       </td>
@@ -195,7 +238,7 @@
       <td>${TARGET}</td>
       <td>${TTL_SEC}</td>
       <td>
-        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        <a href="#" onClick="objEdit('RESOURCEID', 'resource', ${RESOURCEID});">Edit</a>
         |
         <a href="#" id="" class="resource-delete">Delete</a>
       </td>
@@ -207,7 +250,7 @@
       <td>${TARGET}</td>
       <td>${TTL_SEC}</td>
       <td>
-        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        <a href="#" onClick="objEdit('RESOURCEID', 'resource', ${RESOURCEID});">Edit</a>
         |
         <a href="#" id="" class="resource-delete">Delete</a>
       </td>
@@ -223,7 +266,7 @@
       <td>${TARGET}</td>
       <td>${TTL_SEC}</td>
       <td>
-        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        <a href="#" onClick="objEdit('RESOURCEID', 'resource', ${RESOURCEID});">Edit</a>
         |
         <a href="#" id="" class="resource-delete">Delete</a>
       </td>
@@ -235,7 +278,7 @@
       <td>${TARGET}</td>
       <td>${TTL_SEC}</td>
       <td>
-        <a href="#" onClick="resourceEdit(${RESOURCEID});">Edit</a>
+        <a href="#" onClick="objEdit('RESOURCEID', 'resource', ${RESOURCEID});">Edit</a>
         |
         <a href="#" id="" class="resource-delete">Delete</a>
       </td>
@@ -386,11 +429,11 @@
         link_item(elm, obj)
       })
     }
-    function resourceEdit(rid) {
-      var resource = cache.get('RESOURCEID', rid)
+    function objEdit(key, short, rid) {
+      var resource = cache.get(key, rid)
       $('#edit_dialog').html('')
-      $('#tmpl_resource_edit').tmpl([resource]).appendTo('#edit_dialog')
-      link_item($('#resource-'+rid), resource)
+      $('#tmpl_'+short+'_edit').tmpl([resource]).appendTo('#edit_dialog')
+      link_item($('#'+short+'-'+rid), resource)
       $('#edit_dialog').dialog({
         modal: true,
         minWidth: 400,
