@@ -79,7 +79,41 @@
   				<li><a href="#" class="linode_save">Save</a></li>
   			</ul>
   		</form>
+  		<div class="linode_options">
+  		  <ul>
+  		    <li><a href="#linode-configs-${LINODEID}">Config Profiles</a></li>
+  		    <li><a href="#linode-disks-${LINODEID}">Disk Images</a></li>
+  		  </ul>
+  		  <table id="linode-configs-${LINODEID}">
+  		  </table>
+  		  <table id="linode-disks-${LINODEID}">
+  		  </table>
+  		</div>
 		</div>
+		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_configs">
+		<tr>
+		  <td>${LABEL}</td>
+		  <td>
+		    <a href="#">Edit</a>
+		    |
+		    <a href="#">Delete</a>
+		  </td>
+		</tr>
+		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_disks">
+		<tr>
+		  <td>${LABEL}</td>
+		  <td>
+		    <a href="#">Edit</a>
+		    |
+		    <a href="#">Delete</a>
+		  </td>
+		</tr>
+		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_configs_edit">
+		</script>
+		<script type="text/x-jquery-tmpl" id="tmpl_disks_edit">
 		</script>
 		<script type="text/x-jquery-tmpl" id="tmpl_ttl_option">
 		<option value="0">Default</option>
@@ -408,7 +442,20 @@
               $('#tmpl_linode_edit').tmpl([linode]).appendTo('#outer_tabs')
               $('#outer_tabs').tabs('add', '#linode-container-'+id, linode.LABEL)
               $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
-              link_item($('#linode-'+id), linode)  
+              link_item($('#linode-'+id), linode)
+              
+              $('.linode_options').tabs()
+              var configs = cache.getAll('CONFIGID', function(o) {
+                return (o.LINODEID && o.LINODEID.LINODEID == linode.LINODEID)
+              })
+              
+              $('#tmpl_configs').tmpl(configs).appendTo('#linode-configs-'+id)
+              
+              var disks = cache.getAll('DISKID', function(o) {
+                return (o.LINODEID && o.LINODEID.LINODEID == linode.LINODEID)
+              })
+              
+              $('#tmpl_disks').tmpl(disks).appendTo('#linode-disks-'+id)
             }
           })
         })
