@@ -43,6 +43,7 @@
   	<script src="jquery-ui/ui/jquery.effects.transfer.js"></script>
   	
 		<script src="ui.tabs.closable/ui.tabs.closable.js"></script>
+
 		<style>
 		.horizontal_lists li {
 			display: inline;
@@ -53,6 +54,7 @@
 		  width: 100%;
 		}
 		</style>
+
 		<script type="text/x-jquery-tmpl" id="tmpl_linode_edit">
 		<div id="linode-container-${LINODEID}" class="dynamic_tab">
   		<form id="linode-${LINODEID}">
@@ -118,12 +120,34 @@
   		  <input type="hidden" name="CONFIGID" value="${CONFIGID}" />
   		  <li>Label <input type="text" name="LABEL" value="${LABEL}" /></li>
   		  <li>Notes <input type="text" name="COMMENTS" value="${COMMENTS}" /></li>
-  		  <li>Kernel <input type="text" name="KERNELID" value="${KERNELID.KERNELID}" /></li>
+  		  <li>Kernel
+  		    <select name="KERNELID">
+  		      {{each $item.cache.getAll("KERNELID")}}
+  		      <option value="${$value.KERNELID}">${$value.LABEL}</option>
+  		      {{/each}}
+  		    </select>
+  		  </li>
   		  <li>Run Level <input type="text" name="RUNLEVEL" value="${RUNLEVEL}" /></li>
   		  <li>RAM Limit <input type="text" name="RAMLIMIT" value="${RAMLIMIT}" /></li>
-  		  <li>Disk List <input type="text" name="DISKLIST" value="${DISKLIST}" /></li>
+		    {{each DISKLIST.split(",")}}
+		    <li>/dev/xvd${String.fromCharCode(97+$index)}
+          <select>
+            <option value=""></option>
+            {{each(d, disk) cache.getAll("DISKID", matchKey(LINODEID))}}
+            <option value="${disk.DISKID}" {{if disk.DISKID == $value}}selected="selected"{{/if}}>
+              ${disk.LABEL}
+            </option>
+            {{/each}}
+          </select>
+		    </li>
+		    {{/each}}
   		  <li>Root Device Custom <input type="text" name="ROOTDEVICECUSTOM" value="${ROOTDEVICECUSTOM}" /></li>
-  		  <li>Root Device Number <input type="text" name="ROOTDEVICENUM" value="${ROOTDEVICENUM}" />
+  		  <li>Root Device
+  		    <select name="ROOTDEVICENUM">
+  		      {{each DISKLIST.split(",")}}
+  		      <option value="${$index+1}">/dev/xvd${String.fromCharCode(97+$index)}</option>
+  		      {{/each}}
+  		    </select>
   		    Read Only <input type="checkbox" name="ROOTDEVICERO" />
   		  </li>
   		  <li>Rescue <input type="checkbox" name="ISRESCUE" /></li>
@@ -429,10 +453,15 @@
         link_item(elm, obj)
       })
     }
+    function matchKey(obj) {
+      return function(o) {
+        return (o[obj.key] && o[obj.key][obj.key] == obj[obj.key])
+      }
+    }
     function objEdit(key, short, rid) {
       var resource = cache.get(key, rid)
       $('#edit_dialog').html('')
-      $('#tmpl_'+short+'_edit').tmpl([resource]).appendTo('#edit_dialog')
+      $('#tmpl_'+short+'_edit').tmpl([resource], {'cache': cache}).appendTo('#edit_dialog')
       link_item($('#'+short+'-'+rid), resource)
       $('#edit_dialog').dialog({
         modal: true,
@@ -444,11 +473,6 @@
           save: function() { $(this).dialog('close'); }
         },
       })
-    }
-    function matchKey(obj) {
-      return function(o) {
-        return (o[obj.key] && o[obj.key][obj.key] == obj[obj.key])
-      }
     }
     $(function()
     {
