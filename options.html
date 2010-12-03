@@ -1,16 +1,39 @@
 <html>
 <head><title>Linode</title></head>
 <script src="jquery-datalink/jquery.js"></script>
+<script src="jquery.json.js"></script>
+<script src="linode-javascript/linode.api.js"></script>
+<script src="linode-javascript/linode.cache.js"></script>
 <script type="text/javascript">
-
+if(typeof(String.prototype.trim) === "undefined")
+{
+    String.prototype.trim = function() 
+    {
+        return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
 // Saves options to localStorage.
 function save_options() {
 	var keys = []
+	var instances = []
 	$('.api_key').each(function(i, v) {
-		keys.push($(v).val())
+	  var key = $(v).val().toString()
+	  if(key && key.trim().length){
+	    key = key.trim()
+	    keys.push(key)
+	    instances.push(new LinodeApi(key))
+	  }
 	})
-
+  chrome.extension.getBackgroundPage().cache = new LinodeCache(instances);
+  chrome.extension.getBackgroundPage().cache.fill(function(){})
 	localStorage["api_keys"] = keys
+}
+
+function add_key_input(value) {
+  if(!value) {
+    value = ''
+  }
+  $('#api_keys').append('<input type="text" class="api_key" size="100" value="'+value+'"/><br/>')
 }
 
 // Restores select box state to saved value from localStorage.
@@ -21,20 +44,17 @@ function restore_options() {
   }
 	k = k.split(',')
 	$.each(k, function(i, key) {
-		$('#api_keys_'+i).val(key)
+		add_key_input(key)
 	})
 }
-
 </script>
 
 <body onload="restore_options()">
 
-API Keys<br/>
-<input type="text" id="api_keys_0" class="api_key"/><br/>
-<input type="text" id="api_keys_1" class="api_key"/><br/>
-<input type="text" id="api_keys_2" class="api_key"/><br/>
-<input type="text" id="api_keys_3" class="api_key"/><br/>
-<input type="text" id="api_keys_4" class="api_key"/><br/>
+<div id="api_keys">
+  API Keys<br/>
+</div>
+<a href="#" onClick="add_key_input()">Add Another Key</a><br/>
 <button onclick="save_options()">Save</button>
 </body>
 </html>
