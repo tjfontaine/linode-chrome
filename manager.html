@@ -402,6 +402,11 @@
         },
       })
     }
+    function matchKey(obj) {
+      return function(o) {
+        return (o[obj.key] && o[obj.key][obj.key] == obj[obj.key])
+      }
+    }
     $(function()
     {
       function find_tab(label) {
@@ -445,17 +450,14 @@
               link_item($('#linode-'+id), linode)
               
               $('.linode_options').tabs()
-              var configs = cache.getAll('CONFIGID', function(o) {
-                return (o.LINODEID && o.LINODEID.LINODEID == linode.LINODEID)
-              })
               
-              $('#tmpl_configs').tmpl(configs).appendTo('#linode-configs-'+id)
+              $('#tmpl_configs').tmpl(
+                  cache.getAll('CONFIGID', matchKey(linode))
+                ).appendTo('#linode-configs-'+id)
               
-              var disks = cache.getAll('DISKID', function(o) {
-                return (o.LINODEID && o.LINODEID.LINODEID == linode.LINODEID)
-              })
-              
-              $('#tmpl_disks').tmpl(disks).appendTo('#linode-disks-'+id)
+              $('#tmpl_disks').tmpl(
+                  cache.getAll('DISKID', matchKey(linode))
+                ).appendTo('#linode-disks-'+id)
             }
           })
         })
@@ -471,9 +473,7 @@
             }
             else
             {
-              var resources = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID)
-              })
+              var resources = cache.getAll('RESOURCEID', matchKey(domain))
               
               var recs = {
                 'ns': [],
