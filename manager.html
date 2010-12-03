@@ -424,38 +424,34 @@
             }
             else
             {
-              var nsrec = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "ns")
+              var resources = cache.getAll('RESOURCEID', function(o) {
+                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID)
               })
-              var arec = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "a")
-              })
-              var mxrec = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "mx")
-              })
-              var cnamerec = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "cname")
-              })
-              var srvrec = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "srv")
-              })
-              var txtrec = cache.getAll('RESOURCEID', function(o) {
-                return (o.DOMAINID && o.DOMAINID.DOMAINID == domain.DOMAINID && o.TYPE.toLowerCase() == "txt")
+              
+              var recs = {
+                'ns': [],
+                'a': [],
+                'mx': [],
+                'cname': [],
+                'srv': [],
+                'txt': [],
+              }
+              
+              $.each(resources, function(i, r) {
+                var t = r.TYPE.toLowerCase()
+                recs[t].push(r)
               })
               
               $('#tmpl_domain_edit').tmpl([domain]).appendTo('#outer_tabs')
               
-              $('#tmpl_resource_ns').tmpl(nsrec).appendTo('#domain-resource-ns-'+id)
-              $('#tmpl_resource_a').tmpl(arec).appendTo('#domain-resource-a-'+id)
-              $('#tmpl_resource_mx').tmpl(mxrec).appendTo('#domain-resource-mx-'+id)
-              $('#tmpl_resource_cname').tmpl(cnamerec).appendTo('#domain-resource-cname-'+id)
-              $('#tmpl_resource_srv').tmpl(srvrec).appendTo('#domain-resource-srv-'+id)
-              $('#tmpl_resource_txt').tmpl(txtrec).appendTo('#domain-resource-txt-'+id)
+              for (k in recs) {
+                $('#tmpl_resource_'+k).tmpl(recs[k]).appendTo('#domain-resource-'+k+'-'+id)
+              }
               
               $('#outer_tabs').tabs('add', '#domain-container-'+id, domain.DOMAIN)
               $('#outer_tabs').tabs('select', $('#outer_tabs').tabs('length')-1)
               link_item($('#domain-'+id), domain)
-              //iter_objs('resource', resources)
+              
               $('.resources_tabs').tabs()
             }
           })
